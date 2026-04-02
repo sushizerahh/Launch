@@ -20,6 +20,7 @@ const ScoringEngine = require('./modules/scoringEngine');
 const AlertSystem = require('./modules/alertSystem');
 const LearningSystem = require('./modules/learningSystem');
 const IntegrationModule = require('./modules/integrationModule');
+const AutoTrader = require('./modules/autoTrader');
 const { createServer } = require('./api/server');
 
 async function main() {
@@ -49,6 +50,7 @@ async function main() {
   );
 
   const learningSystem = new LearningSystem(scoringEngine, devCluster);
+  const autoTrader     = new AutoTrader();
 
   // -------------------------------------------------------
   // Initialize (order matters)
@@ -59,6 +61,7 @@ async function main() {
   preLaunchDetector.init();
   learningSystem.init();
   integrationModule.init();
+  autoTrader.init();
 
   // -------------------------------------------------------
   // Start API server + get Socket.IO instance
@@ -72,6 +75,7 @@ async function main() {
     learningSystem,
     integrationModule,
     preLaunchDetector,
+    autoTrader,
   };
 
   const { io } = createServer(engine);
@@ -105,13 +109,25 @@ async function main() {
     if (scoring.entryPriority === 'HIGH') {
       await integrationModule.sendTradeSignal(launchRow, scoring);
     }
+
+    // AutoTrader: adiciona à watchlist se score suficiente
+    autoTrader.onPreLaunchDetected(launchRow, scoring);
   });
 
-  // Confirmed on-chain launch
+  // Confirmed on-chain launch — dispara compra no autoTrader
   preLaunchDetector.on('launch_confirmed', ({ id, data }) => {
     logger.info(`[Main] Launch confirmed on-chain: ${id.slice(0, 8)}`);
     io.emit('launch_confirmed', { id, data });
+
+    const tokenAddress = data?.tokenAddress || data?.mint || null;
+    if (tokenAddress) {
+      autoTrader.onLaunchConfirmed(id, tokenAddress);
+    }
   });
+
+  // Emite trades para o dashboard em tempo real
+  autoTrader.on('bought', (data) => io.emit('trade_bought', data));
+  autoTrader.on('sold',   (data) => io.emit('trade_sold', data));
 
   // -------------------------------------------------------
   // Start scanners
@@ -128,6 +144,9 @@ async function main() {
     socialAnalyzer.stop();
     learningSystem.stop();
     scoringEngine.saveModel();
+    if (autoTrader.positions.size > 0) {
+      logger.warn(`[Main] ATENÇÃO: ${autoTrader.positions.size} posição(ões) abertas ao encerrar!`);
+    }
     process.exit(0);
   };
 

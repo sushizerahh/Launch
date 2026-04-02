@@ -150,6 +150,30 @@ function initSchema(db) {
       metadata TEXT
     );
 
+    -- Trades executados pelo autoTrader
+    CREATE TABLE IF NOT EXISTS trades (
+      id TEXT PRIMARY KEY,
+      launch_id TEXT,
+      token_address TEXT NOT NULL,
+      status TEXT DEFAULT 'pending',
+      buy_signature TEXT,
+      sell_signature TEXT,
+      sol_in REAL,
+      tokens_out REAL,
+      buy_price_usd REAL,
+      sell_price_usd REAL,
+      buy_at INTEGER,
+      sell_at INTEGER,
+      take_profit_target REAL,
+      stop_loss_target REAL,
+      pnl_sol REAL,
+      pnl_pct REAL,
+      close_reason TEXT,
+      FOREIGN KEY (launch_id) REFERENCES potential_launches(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status);
+    CREATE INDEX IF NOT EXISTS idx_trades_token ON trades(token_address);
     CREATE INDEX IF NOT EXISTS idx_wallets_cluster ON wallets(dev_cluster_id);
     CREATE INDEX IF NOT EXISTS idx_launches_score ON potential_launches(score DESC);
     CREATE INDEX IF NOT EXISTS idx_launches_status ON potential_launches(status);

@@ -85,6 +85,31 @@ const config = {
     webhookSecret: process.env.TRADING_BOT_SECRET || '',
   },
 
+  autoTrader: {
+    // Habilita/desabilita — só funciona se WALLET_PRIVATE_KEY estiver no .env
+    enabled: process.env.AUTO_TRADER_ENABLED === 'true',
+    // Score mínimo para entrar em uma trade (0-1)
+    minScoreToBuy: parseFloat(process.env.AUTO_TRADE_MIN_SCORE || '0.80'),
+    // Risco máximo permitido (0-1)
+    maxRiskScore: parseFloat(process.env.AUTO_TRADE_MAX_RISK || '0.65'),
+    // SOL por trade (ex: 0.1 = 0.1 SOL)
+    solPerTrade: parseFloat(process.env.AUTO_TRADE_SOL_AMOUNT || '0.1'),
+    // Multiplicador para Take Profit (ex: 2 = vende quando dobrar)
+    takeProfitMultiplier: parseFloat(process.env.AUTO_TRADE_TAKE_PROFIT || '2.0'),
+    // Percentual de Stop Loss (ex: 30 = vende se cair 30%)
+    stopLossPct: parseFloat(process.env.AUTO_TRADE_STOP_LOSS_PCT || '30'),
+    // Máximo de posições abertas ao mesmo tempo
+    maxPositions: parseInt(process.env.AUTO_TRADE_MAX_POSITIONS || '3', 10),
+    // Slippage em bps (500 = 5%)
+    slippageBps: parseInt(process.env.AUTO_TRADE_SLIPPAGE_BPS || '500', 10),
+    // Priority fee para a transação (lamports)
+    priorityFeeLamports: parseInt(process.env.AUTO_TRADE_PRIORITY_FEE || '100000', 10),
+    // Intervalo de checagem de preço (ms)
+    priceCheckIntervalMs: parseInt(process.env.AUTO_TRADE_PRICE_INTERVAL_MS || '10000', 10),
+    // Tempo máximo segurando um token antes de forçar venda (ms) — padrão 30min
+    maxHoldingMs: parseInt(process.env.AUTO_TRADE_MAX_HOLD_MS || '1800000', 10),
+  },
+
   model: {
     path: './models/scoring_model.json',
     minTrainingSamples: 50,

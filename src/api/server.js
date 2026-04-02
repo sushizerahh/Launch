@@ -167,6 +167,35 @@ function createServer(engine) {
     res.json({ ok: true });
   });
 
+  // ---- AutoTrader endpoints ----
+
+  // Status e posições abertas
+  app.get('/api/trader/status', (req, res) => {
+    const at = engine?.autoTrader;
+    if (!at) return res.status(503).json({ error: 'AutoTrader não inicializado' });
+    res.json({
+      enabled: at.enabled,
+      openPositions: at.getOpenPositions(),
+      watchlistSize: at.watchlist.size,
+      pnl: at.getTradePnL(),
+    });
+  });
+
+  // Histórico de trades
+  app.get('/api/trader/trades', (req, res) => {
+    const at = engine?.autoTrader;
+    if (!at) return res.status(503).json({ error: 'Not running' });
+    res.json(at.getTradeHistory(parseInt(req.query.limit || '50')));
+  });
+
+  // Venda manual de uma posição
+  app.post('/api/trader/sell/:tokenAddress', async (req, res) => {
+    const at = engine?.autoTrader;
+    if (!at) return res.status(503).json({ error: 'Not running' });
+    const result = await at.manualSell(req.params.tokenAddress);
+    res.json(result);
+  });
+
   // -------------------------------------------------------
   // WebSocket events
   // -------------------------------------------------------
