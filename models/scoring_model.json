@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "trainingSamples": 0,
+  "lastTrained": null,
+  "accuracy": null,
+  "weights": {
+    "bias": -1.5,
+    "devScore": 2.8,
+    "onchainScore": 2.2,
+    "socialScore": 1.8,
+    "capitalScore": 1.5,
+    "similarityScore": 1.2,
+    "clusterSuccessRate": 2.0,
+    "clusterLaunches": 0.8,
+    "clusterAvgMultiplier": 1.0,
+    "marketHoursBonus": 0.5,
+    "weekendBonus": 0.3
+  },
+  "featureWeights": {
+    "devScore": 0.30,
+    "onchainActivity": 0.25,
+    "socialSignals": 0.20,
+    "capitalPattern": 0.15,
+    "launchSimilarity": 0.10
+  },
+  "description": "Default weights - will improve with real training data"
+}

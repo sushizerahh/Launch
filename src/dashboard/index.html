@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predictive Launch Engine - Solana</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <span class="logo-icon">&#9650;</span>
+        <span class="logo-text">Predictive Launch Engine</span>
+        <span class="badge-sol">SOL</span>
+      </div>
+      <div class="header-right">
+        <span id="status-dot" class="status-dot offline"></span>
+        <span id="status-text">Connecting...</span>
+        <span class="uptime" id="uptime-display">--</span>
+      </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total Detected</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-pending">0</div>
+        <div class="stat-label">Pre-Launch Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-accuracy">--</div>
+        <div class="stat-label">Model Accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-avg-mult">--</div>
+        <div class="stat-label">Avg Pump (success)</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- Launches Table -->
+      <div class="panel wide-panel">
+        <div class="panel-header">
+          <h2>Potential Launches</h2>
+          <div class="filters">
+            <button class="filter-btn active" data-status="pre_launch">Pre-Launch</button>
+            <button class="filter-btn" data-status="launched">Launched</button>
+            <button class="filter-btn" data-status="resolved">Resolved</button>
+            <button class="filter-btn" data-status="all">All</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="launches-table">
+            <thead>
+              <tr>
+                <th>Score</th>
+                <th>Priority</th>
+                <th>Token</th>
+                <th>Dev Wallet</th>
+                <th>Dev</th>
+                <th>On-chain</th>
+                <th>Social</th>
+                <th>Capital</th>
+                <th>Status</th>
+                <th>Detected</th>
+                <th>Outcome</th>
+              </tr>
+            </thead>
+            <tbody id="launches-tbody">
+              <tr><td colspan="11" class="empty-row">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Alerts Feed -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Live Alerts</h2>
+          <span class="badge-live" id="alert-count">0</span>
+        </div>
+        <div id="alerts-feed" class="alerts-feed">
+          <p class="empty-msg">No alerts yet</p>
+        </div>
+      </div>
+
+      <!-- Top Devs -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Top Developers</h2>
+        </div>
+        <div id="devs-list" class="devs-list">
+          <p class="empty-msg">Loading...</p>
+        </div>
+      </div>
+
+      <!-- Model Performance -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Model Performance</h2>
+        </div>
+        <div id="perf-panel" class="perf-panel">
+          <div class="perf-row">
+            <span>Accuracy</span><span id="perf-accuracy">--</span>
+          </div>
+          <div class="perf-row">
+            <span>Total Predictions</span><span id="perf-total">--</span>
+          </div>
+          <div class="perf-row">
+            <span>Resolved</span><span id="perf-resolved">--</span>
+          </div>
+          <div class="perf-row">
+            <span>Avg Multiplier</span><span id="perf-avg-mult">--</span>
+          </div>
+          <div class="perf-row">
+            <span>Training Samples</span><span id="perf-samples">--</span>
+          </div>
+          <div class="perf-row">
+            <span>Last Retrained</span><span id="perf-last-train">--</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-grid -->
+
+    <!-- Launch Detail Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+  </div><!-- /app -->
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
